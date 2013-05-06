@@ -1,0 +1,206 @@
+<!doctype html> 
+<link type="text/css" rel="stylesheet" href="rickshaw/src/css/graph.css">
+<link type="text/css" rel="stylesheet" href="rickshaw/rickshaw.css">
+
+<script src="rickshaw/vendor/d3.v2.js"></script> 
+<script src="rickshaw/rickshaw.js"></script> 
+ 
+<style>
+  body {
+    padding-left: 40px;
+  }
+  .chart_container {
+  }
+  .chart {
+    float: left;
+  }
+  .y_axis {
+    float: left;
+    margin-left: -50px;
+  }
+  .x_axis {
+    float: left;
+  }
+  .legend {
+    float: left;
+    margin: -300px 0 0 -60px;
+  }
+</style>
+
+<h1>OpenStruct Optimization Benchmark</h1>
+
+<p>Benchmark branches:</p>
+<ul>
+  <li>OpenStruct: perftools</li>
+  <li>Faster::OpenStruct: perftools_faster_open_struct</li>
+  <li>FastOpenStruct: perftools_fast_open_struct</li>
+</ul>
+
+<div id="srp">
+  <h2>Search Results Page Response Time (seconds)</h2>
+  <h5>http://local.apartmentguide.com/apartments/Georgia/Norcross/</h5>
+  <div class="chart_container">
+    <div class="y_axis"></div>
+    <div class="chart"></div>
+    <div class="x_axis"></div>
+  </div>
+  <div class="legend"></div>
+</div>
+
+<div style='clear:both;'></div>
+
+<div id="details_page">
+  <h2>Details Page Response Time (seconds)</h2>
+  <div class="chart_container">
+    <div class="y_axis"></div>
+    <div class="chart"></div>
+    <div class="x_axis"></div>
+  </div>
+  <div class="legend"></div>
+</div>
+
+<script> 
+  var srp = new Rickshaw.Graph( {
+      element: document.querySelector("#srp .chart"), 
+      width: 1000, 
+      height: 300, 
+      renderer: 'line',
+      min: 0.5,
+      series: [
+        { name: 'OpenStruct',
+          color: 'steelblue',
+          data: [ 
+            {x:1, y:0.645},
+            {x:2, y:0.676},
+            {x:3, y:0.691},
+            {x:4, y:0.744},
+            {x:5, y:0.647},
+            {x:6, y:0.689},
+            {x:7, y:0.757},
+            {x:8, y:0.642},
+            {x:9, y:0.660},
+            {x:10, y:0.727}
+          ] },
+        { name: 'Faster::OpenStruct',
+          color: 'tan',
+          data: [
+            {x:1, y:0.603},
+            {x:2, y:0.561},
+            {x:3, y:0.535},
+            {x:4, y:0.606},
+            {x:5, y:0.538},
+            {x:6, y:0.564},
+            {x:7, y:0.563},
+            {x:8, y:0.560},
+            {x:9, y:0.577},
+            {x:10, y:0.565}
+          ] },
+        { name: 'FastOpenStruct',
+          color: 'tomato',
+          data:[
+            {x:1, y:0.733},
+            {x:2, y:0.675},
+            {x:3, y:0.704},
+            {x:4, y:0.739},
+            {x:5, y:0.695},
+            {x:6, y:0.674},
+            {x:7, y:0.731},
+            {x:8, y:0.708},
+            {x:9, y:0.678},
+            {x:10, y:0.724}
+          ] }
+      ]
+  });
+
+  new Rickshaw.Graph.Axis.X( {
+    graph: srp,
+    orientation: 'bottom',
+    element: document.querySelector('#srp .x_axis'),
+    pixelsPerTick: 100
+  } );
+  new Rickshaw.Graph.Axis.Y( {
+    graph: srp,
+    orientation: 'left',
+    element: document.querySelector('#srp .y_axis'),
+    pixelsPerTick: 50
+  } );
+
+  new Rickshaw.Graph.Legend( {
+    graph: srp,
+    element: document.querySelector('#srp .legend')
+  } );
+
+  srp.render();
+
+  var detailsPage = new Rickshaw.Graph( {
+      element: document.querySelector("#details_page .chart"), 
+      width: 1000, 
+      height: 300, 
+      renderer: 'line',
+      min: 0.5,
+      series: [
+        { name: 'OpenStruct',
+          color: 'steelblue',
+          data: [ 
+            {x:1, y:0.584},
+            {x:2, y:0.622},
+            {x:3, y:0.561},
+            {x:4, y:0.583},
+            {x:5, y:0.576},
+            {x:6, y:0.580},
+            {x:7, y:0.562},
+            {x:8, y:0.566},
+            {x:9, y:0.613},
+            {x:10, y:0.595}
+          ] },
+        { name: 'Faster::OpenStruct',
+          color: 'tan',
+          data: [
+            {x:1, y:0.667},
+            {x:2, y:0.632},
+            {x:3, y:0.646},
+            {x:4, y:0.648},
+            {x:5, y:0.654},
+            {x:6, y:0.647},
+            {x:7, y:0.679},
+            {x:8, y:0.638},
+            {x:9, y:0.681},
+            {x:10, y:0.676}
+          ] },
+        { name: 'FastOpenStruct',
+          color: 'tomato',
+          data:[
+            {x:1, y:0.631},
+            {x:2, y:0.641},
+            {x:3, y:0.646},
+            {x:4, y:0.631},
+            {x:5, y:0.667},
+            {x:6, y:0.663},
+            {x:7, y:0.621},
+            {x:8, y:0.641},
+            {x:9, y:0.634},
+            {x:10, y:0.615}
+          ] }
+      ]
+  });
+
+  new Rickshaw.Graph.Axis.X( {
+    graph: detailsPage,
+    orientation: 'bottom',
+    element: document.querySelector('#details_page .x_axis'),
+    pixelsPerTick: 100
+  } );
+  new Rickshaw.Graph.Axis.Y( {
+    graph: detailsPage,
+    orientation: 'left',
+    element: document.querySelector('#details_page .y_axis'),
+    pixelsPerTick: 50
+  } );
+
+  new Rickshaw.Graph.Legend( {
+    graph: detailsPage,
+    element: document.querySelector('#details_page .legend')
+  } );
+
+  detailsPage.render();
+</script> 
