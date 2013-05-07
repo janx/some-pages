@@ -1,0 +1,118 @@
+diff --git a/app/models/listings_query.rb b/app/models/listings_query.rb
+index 1d3e5a5..2e74e39 100644
+--- a/app/models/listings_query.rb
++++ b/app/models/listings_query.rb
+@@ -15,7 +15,7 @@ class ListingsQuery
+ 
+     results             = ListingResultsPresenter.new ListingService.all(@params), options
+     results.spotlights  = SpotlightResultsPresenter.new SpotlightService.all(@params)
+-    results.geo         = OpenStruct.new @geo.merge({'total' => results.total })
++    results.geo         = @geo.merge({'total' => results.total })
+ 
+     results.refinement_codes = @params[:refinements].nil? ? '' :  @params[:refinements].split('-').last.strip.gsub(/miles/, '')
+     results.refinement_codes += (results.refinement_codes.length > 0 ? '+' : '') + "#{@params[:miles]}-miles" if @params[:miles]
+@@ -28,7 +28,7 @@ class ListingsQuery
+     process_params!
+     @params.merge!(@geo)
+     results            = ListingResultsPresenter.new ListingService.map_view_listings(@params), :type => ListingResultsPresenter::MapListing
+-    results.geo        = OpenStruct.new @geo.merge({'total' => results.total })
++    results.geo        = @geo.merge({'total' => results.total })
+     slice_results(results, params)
+     results
+   end
+@@ -37,7 +37,7 @@ class ListingsQuery
+     @params.merge!(@geo)
+ 
+     results             = ListingResultsPresenter.new ListingService.zip_and_city(@params)
+-    results.geo         = OpenStruct.new @geo.merge({'total' => results.total })
++    results.geo         = @geo.merge({'total' => results.total })
+ 
+     process_nearby!(results)
+     results
+diff --git a/app/presenters/listing_presenter.rb b/app/presenters/listing_presenter.rb
+index b4bd9ea..1f04d97 100644
+--- a/app/presenters/listing_presenter.rb
++++ b/app/presenters/listing_presenter.rb
+@@ -77,7 +77,6 @@ class ListingPresenter
+     listing.show_reason_for_move          = listing.leadmovereason == '1' ? '1' : '0'
+     listing.reason_for_move_required      = listing.leadmovereasonreq == '1' ? '1' : '0'
+     listing.photo_paths                   = concat_image_urls(listing.photos)
+-    listing.photo_array                   = build_photos(listing)
+     listing.photo_array                   = build_photos(listing.photos)
+     listing.floorplan_array               = build_photos(listing.floorplans)
+     listing.photo_array_with_urls         = build_photos_with_urls(listing)
+@@ -256,11 +255,12 @@ class ListingPresenter
+ 
+   def self.build_photos(images)
+     photo_arr = []
+-    return [] unless images
+ 
+-    images.each do |image|
+-      title = image.title || ""
+-      photo_arr << { :title => (title), :path => image.path }
++    if images
++      images.each do |image|
++        title = image.title || ""
++        photo_arr << { :title => (title), :path => image.path }
++      end
+     end
+ 
+     photo_arr
+diff --git a/app/presenters/listing_results_presenter/detailed_listing.rb b/app/presenters/listing_results_presenter/detailed_listing.rb
+index 4d881f3..ba39d4a 100644
+--- a/app/presenters/listing_results_presenter/detailed_listing.rb
++++ b/app/presenters/listing_results_presenter/detailed_listing.rb
+@@ -24,7 +24,7 @@ class ListingResultsPresenter
+ 
+           if unit.matched_on
+             unit.listingid = unit.matched_on.listingid
+-            unit.delete_field(:matched_on)
++            unit.delete('matched_on')
+           end
+ 
+           unit.deposit = unit.deposit ? "$" + unit.deposit : "Please Call"
+diff --git a/app/presenters/results.rb b/app/presenters/results.rb
+index c99be81..d6509a1 100644
+--- a/app/presenters/results.rb
++++ b/app/presenters/results.rb
+@@ -1,21 +1,28 @@
+-require 'ostruct'
++#require 'ostruct'
+ require 'htmlentities'
+ 
+-class ResultPresenter
+-  def self.process(value)
+-    return unless value
+-    case value
+-    when Array
+-      value.collect { |v| process(v) }
+-    when Hash
+-      convert({}.tap { |temp| value.each { |k,v| temp[k] = process(v) } })
++class Hash
++  alias :__values :values
++  def values
++    self["values"] || __values
++  end
++
++  alias :__method_missing :method_missing
++  def method_missing(name, *args, &block)
++    if args.empty?
++      self[name.to_s] || self[name]
++    elsif args.size == 1 && name =~ /=$/
++      class <<self; self; end.send :attr_accessor, name[0..-2]
++      self.send name, args.first
+     else
+-      value
++      __method_missing(name, *args, &block)
+     end
+   end
++end
+ 
+-  def self.convert(value)
+-    OpenStruct.new(value)
++class ResultPresenter
++  def self.process(value)
++    return value
+   end
+ end
+ 
