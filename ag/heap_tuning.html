@@ -1,0 +1,180 @@
+<!doctype html> 
+<link type="text/css" rel="stylesheet" href="rickshaw/src/css/graph.css">
+<link type="text/css" rel="stylesheet" href="rickshaw/rickshaw.css">
+
+<script src="rickshaw/vendor/d3.v2.js"></script> 
+<script src="rickshaw/rickshaw.js"></script> 
+ 
+<style>
+  body {
+    padding-left: 40px;
+  }
+  .chart_container {
+  }
+  .chart {
+    float: left;
+  }
+  .y_axis {
+    float: left;
+    margin-left: -50px;
+  }
+  .x_axis {
+    float: left;
+  }
+  .legend {
+    float: left;
+    margin: -300px 0 0 -60px;
+  }
+</style>
+
+<h1>Heap Parameters Tuning Benchmark</h1>
+
+<p>Linux vaio 3.8.11-1-ARCH #1 SMP PREEMPT, ruby 1.9.3p327 (2012-11-10 revision 37606) [x86_64-linux], Intel(R) Core(TM) i5-2430M CPU @ 2.40GHz, 8G Memory</p>
+
+<p>Heap Params:</p>
+<pre>
+RUBY_HEAP_MIN_SLOTS=10000000
+RUBY_HEAP_FREE_MIN=10000
+RUBY_GC_MALLOC_LIMIT=80000000
+</pre>
+
+<div id="srp">
+  <h2>Search Results Page Response Time (seconds)</h2>
+  <h5>http://local.apartmentguide.com/apartments/Georgia/Norcross/</h5>
+  <div class="chart_container">
+    <div class="y_axis"></div>
+    <div class="chart"></div>
+    <div class="x_axis"></div>
+  </div>
+  <div class="legend"></div>
+</div>
+
+<div style='clear:both;'></div>
+
+<div id="details_page">
+  <h2>Details Page Response Time (seconds)</h2>
+  <div class="chart_container">
+    <div class="y_axis"></div>
+    <div class="chart"></div>
+    <div class="x_axis"></div>
+  </div>
+  <div class="legend"></div>
+</div>
+
+<script> 
+  var srp = new Rickshaw.Graph( {
+      element: document.querySelector("#srp .chart"), 
+      width: 1000, 
+      height: 300, 
+      renderer: 'line',
+      min: 0.1,
+      series: [
+        { name: 'Default',
+          color: 'steelblue',
+          data: [ 
+          {x:1, y:0.503},
+          {x:2, y:0.542},
+          {x:3, y:0.559},
+          {x:4, y:0.560},
+          {x:5, y:0.564},
+          {x:6, y:0.609},
+          {x:7, y:0.570},
+          {x:8, y:0.569},
+          {x:9, y:0.566},
+          {x:10, y:0.579}
+          ] },
+        { name: 'Optimized',
+          color: 'tomato',
+          data:[
+          {x:1, y:0.478},
+          {x:2, y:0.482},
+          {x:3, y:0.365},
+          {x:4, y:0.341},
+          {x:5, y:0.490},
+          {x:6, y:0.338},
+          {x:7, y:0.337},
+          {x:8, y:0.489},
+          {x:9, y:0.345},
+          {x:10, y:0.495}
+          ] }
+      ]
+  });
+
+  new Rickshaw.Graph.Axis.X( {
+    graph: srp,
+    orientation: 'bottom',
+    element: document.querySelector('#srp .x_axis'),
+    pixelsPerTick: 100
+  } );
+  new Rickshaw.Graph.Axis.Y( {
+    graph: srp,
+    orientation: 'left',
+    element: document.querySelector('#srp .y_axis'),
+    pixelsPerTick: 50
+  } );
+
+  new Rickshaw.Graph.Legend( {
+    graph: srp,
+    element: document.querySelector('#srp .legend')
+  } );
+
+  srp.render();
+
+  var detailsPage = new Rickshaw.Graph( {
+      element: document.querySelector("#details_page .chart"), 
+      width: 1000, 
+      height: 300, 
+      renderer: 'line',
+      min: 0.1,
+      series: [
+        { name: 'Default',
+          color: 'steelblue',
+          data: [ 
+          {x:1, y:0.442},
+          {x:2, y:0.472},
+          {x:3, y:0.489},
+          {x:4, y:0.464},
+          {x:5, y:0.484},
+          {x:6, y:0.466},
+          {x:7, y:0.462},
+          {x:8, y:0.471},
+          {x:9, y:0.467},
+          {x:10, y:0.459}
+          ] },
+        { name: 'Optimized',
+          color: 'tomato',
+          data:[
+          {x:1, y:0.405},
+          {x:2, y:0.410},
+          {x:3, y:0.287},
+          {x:4, y:0.282},
+          {x:5, y:0.305},
+          {x:6, y:0.432},
+          {x:7, y:0.279},
+          {x:8, y:0.277},
+          {x:9, y:0.277},
+          {x:10, y:0.422}
+          ] }
+      ]
+  });
+
+  new Rickshaw.Graph.Axis.X( {
+    graph: detailsPage,
+    orientation: 'bottom',
+    element: document.querySelector('#details_page .x_axis'),
+    pixelsPerTick: 100
+  } );
+  new Rickshaw.Graph.Axis.Y( {
+    graph: detailsPage,
+    orientation: 'left',
+    element: document.querySelector('#details_page .y_axis'),
+    pixelsPerTick: 50
+  } );
+
+  new Rickshaw.Graph.Legend( {
+    graph: detailsPage,
+    element: document.querySelector('#details_page .legend')
+  } );
+
+  detailsPage.render();
+</script> 
